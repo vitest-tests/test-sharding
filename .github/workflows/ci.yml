@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        shardIndex: [1, 2, 3, 4] # There are 5 tests, so use 4 shards to make thing a bit more complicated
+        shardIndex: [1, 2, 3, 4] # There are 6 tests, so use 4 shards to make things a bit more complicated
         shardTotal: [4]
 
     steps:
@@ -33,6 +33,15 @@ jobs:
         with:
           name: blob-report-${{ matrix.shardIndex }}
           path: .vitest-reports/*
+          include-hidden-files: true
+          retention-days: 1
+
+      - name: Upload attachments to GitHub Actions Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-attachments-${{ matrix.shardIndex }}
+          path: .vitest-attachments/**
           include-hidden-files: true
           retention-days: 1
 
@@ -61,10 +70,23 @@ jobs:
           pattern: blob-report-*
           merge-multiple: true
 
+      - name: Download attachments from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: .vitest-attachments
+          pattern: blob-attachments-*
+          merge-multiple: true
+
       - name: Check .vitest-reports
         run: |
           ls -la .vitest-reports
           ls -la .vitest-reports/*
 
       - name: Merge reports
-        run: npx vitest --merge-reports
+        run: npx vitest --merge-reports --reporter=default --reporter=html
+
+      - name: Upload merged html report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: html

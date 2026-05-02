@@ -6,10 +6,10 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.18",
-    "@vitest/ui": "^4.0.18",
+    "@vitest/coverage-v8": "https://pkg.pr.new/@vitest/coverage-v8@10232",
+    "@vitest/ui": "https://pkg.pr.new/@vitest/ui@10232",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vitest": "^4.0.18"
+    "vitest": "https://pkg.pr.new/vitest@10232"
   }
 }

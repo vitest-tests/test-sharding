@@ -27,21 +27,12 @@ jobs:
       - name: Run tests
         run: pnpm run test --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      - name: Upload blob report to GitHub Actions Artifacts
+      - name: Upload Vitest results GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ matrix.shardIndex }}
-          path: .vitest-reports/*
-          include-hidden-files: true
-          retention-days: 1
-
-      - name: Upload attachments to GitHub Actions Artifacts
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: blob-attachments-${{ matrix.shardIndex }}
-          path: .vitest-attachments/**
+          name: vitest-results-${{ matrix.shardIndex }}
+          path: .vitest
           include-hidden-files: true
           retention-days: 1
 
@@ -63,24 +54,16 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
-      - name: Download blob reports from GitHub Actions Artifacts
+      - name: Download Vitest results from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: .vitest-reports
-          pattern: blob-report-*
+          path: .vitest
           merge-multiple: true
 
-      - name: Download attachments from GitHub Actions Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: .vitest-attachments
-          pattern: blob-attachments-*
-          merge-multiple: true
-
-      - name: Check .vitest-reports
+      - name: Check .vitest
         run: |
-          ls -la .vitest-reports
-          ls -la .vitest-reports/*
+          ls -la .vitest
+          ls -la .vitest/*
 
       - name: Merge reports
         run: npx vitest --merge-reports --reporter=default --reporter=html
